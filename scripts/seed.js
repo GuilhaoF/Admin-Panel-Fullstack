@@ -6,7 +6,48 @@ const {
   users,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
+//delete dados in database
+async function clearUsers(client) {
+  try {
+    await client.sql`DELETE FROM users`;
+    console.log("Cleared users");
+  } catch (error) {
+    console.error('Error clearing users:', error);
+    throw error;
+  }
+}
 
+async function clearCustomers(client) {
+  try {
+    await client.sql`DELETE FROM customers`;
+    console.log("Cleared customers");
+  } catch (error) {
+    console.error('Error clearing customers:', error);
+    throw error;
+  }
+}
+
+async function clearInvoices(client) {
+  try {
+    await client.sql`DELETE FROM invoices`;
+    console.log("Cleared invoices");
+  } catch (error) {
+    console.error('Error clearing invoices:', error);
+    throw error;
+  }
+}
+
+async function clearRevenue(client) {
+  try {
+    await client.sql`DELETE FROM revenue`;
+    console.log("Cleared revenue");
+  } catch (error) {
+    console.error('Error clearing revenue:', error);
+    throw error;
+  }
+}
+
+//adicionando dados ao database
 async function seedUsers(client) {
   try {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
@@ -160,13 +201,20 @@ async function seedRevenue(client) {
   }
 }
 
+
 async function main() {
   const client = await db.connect();
+
+  await clearUsers(client);
+  await clearCustomers(client);
+  await clearInvoices(client);
+  await clearRevenue(client);
 
   await seedUsers(client);
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
+ 
 
   await client.end();
 }
